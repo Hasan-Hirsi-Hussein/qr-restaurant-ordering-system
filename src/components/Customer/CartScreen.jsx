@@ -58,14 +58,27 @@ export const CartScreen = ({ onOrderPlaced }) => {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <div>
           <span style={{ fontSize: '0.8rem', color: 'var(--primary)', fontWeight: 700, textTransform: 'uppercase' }}>
-            Dine-In Order
+            {selectedTable ? 'Dine-In Order' : 'Takeaway / Online'}
           </span>
           <h2 style={{ fontSize: '1.4rem' }}>{t('yourCart')}</h2>
         </div>
-        <div className="table-pill-badge" style={{ margin: 0 }}>
-          <QrCode size={14} />
-          <span>{t('table')} {selectedTable.replace('TB-', '')}</span>
-        </div>
+        {selectedTable ? (
+          <div className="table-pill-badge" style={{ margin: 0 }}>
+            <QrCode size={14} />
+            <span>{t('table')} {selectedTable.replace('TB-', '')}</span>
+          </div>
+        ) : (
+          <div style={{
+            background: 'rgba(217, 83, 30, 0.1)',
+            color: 'var(--primary)',
+            padding: '4px 10px',
+            borderRadius: '20px',
+            fontSize: '0.78rem',
+            fontWeight: 700
+          }}>
+            <span>Takeaway</span>
+          </div>
+        )}
       </div>
 
       {/* Cart Items List */}

@@ -85,10 +85,12 @@ export const MenuScreen = ({ onGoToCart }) => {
               <MapPin size={12} color="var(--primary)" />
               <span>Laamaha ({branches.length})</span>
             </button>
-            <div className="table-pill-badge" style={{ margin: 0, padding: '5px 10px', fontSize: '0.78rem' }}>
-              <QrCode size={13} />
-              <span>{t('table')} {selectedTable.replace('TB-', '')}</span>
-            </div>
+            {selectedTable && (
+              <div className="table-pill-badge" style={{ margin: 0, padding: '5px 10px', fontSize: '0.78rem' }}>
+                <QrCode size={13} />
+                <span>{t('table')} {selectedTable.replace('TB-', '')}</span>
+              </div>
+            )}
           </div>
         </div>
 

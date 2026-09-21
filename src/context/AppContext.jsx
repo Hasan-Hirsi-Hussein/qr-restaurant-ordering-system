@@ -200,7 +200,7 @@ export const AppProvider = ({ children }) => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   
-  // Table detection from URL ?table=TB-07
+  // Table detection from URL (e.g. ?table=TB-01)
   const [selectedTable, setSelectedTable] = useState(() => {
     const params = new URLSearchParams(window.location.search);
     const tableParam = params.get('table');
@@ -209,7 +209,7 @@ export const AppProvider = ({ children }) => {
         ? tableParam.toUpperCase()
         : `TB-${tableParam.padStart(2, '0')}`;
     }
-    return 'TB-07'; // Default table
+    return null; // Do NOT default to TB-07; null if not scanned
   });
 
   const [categories, setCategories] = useState([]);
@@ -225,9 +225,18 @@ export const AppProvider = ({ children }) => {
 
   // Sync URL parameter if table changes
   const changeTable = (newTable) => {
-    setSelectedTable(newTable);
+    const formatted = newTable
+      ? (newTable.toUpperCase().startsWith('TB-')
+        ? newTable.toUpperCase()
+        : `TB-${newTable.padStart(2, '0')}`)
+      : null;
+    setSelectedTable(formatted);
     const url = new URL(window.location);
-    url.searchParams.set('table', newTable);
+    if (formatted) {
+      url.searchParams.set('table', formatted);
+    } else {
+      url.searchParams.delete('table');
+    }
     window.history.pushState({}, '', url);
   };
 

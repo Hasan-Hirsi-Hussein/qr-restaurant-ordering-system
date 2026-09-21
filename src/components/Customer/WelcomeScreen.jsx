@@ -1,17 +1,40 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { QrCode, ArrowRight, Clock, Sparkles } from 'lucide-react';
+import { QrCode, ArrowRight, Clock, Sparkles, ShoppingBag } from 'lucide-react';
 import { RestaurantLogo } from '../Common/RestaurantLogo';
 
 export const WelcomeScreen = ({ onStartOrdering }) => {
-  const { selectedTable, branding, language, t } = useApp();
+  const { selectedTable, changeTable, branding, language, t } = useApp();
 
   return (
     <div className="welcome-card">
-      <div className="table-pill-badge">
-        <QrCode size={16} />
-        <span>{t('welcomeSubtitle')} {t('table')} {selectedTable.replace('TB-', '')}</span>
-      </div>
+      {selectedTable ? (
+        <div className="table-pill-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+          <QrCode size={16} />
+          <span>{t('welcomeSubtitle')} {t('table')} {selectedTable.replace('TB-', '')}</span>
+          <button
+            onClick={() => changeTable(null)}
+            style={{
+              background: 'rgba(234, 88, 12, 0.1)',
+              border: 'none',
+              borderRadius: 12,
+              padding: '2px 8px',
+              color: 'var(--primary)',
+              cursor: 'pointer',
+              fontSize: '0.72rem',
+              fontWeight: 700
+            }}
+            title="Ka dhig Takeaway"
+          >
+            ✕ Ka saar
+          </button>
+        </div>
+      ) : (
+        <div className="table-pill-badge" style={{ background: 'rgba(217, 83, 30, 0.08)', color: 'var(--primary)', borderColor: 'rgba(217, 83, 30, 0.2)' }}>
+          <ShoppingBag size={15} />
+          <span>{language === 'so' ? 'Dalabka Dhoofka (Takeaway)' : 'Takeaway / Direct Order'}</span>
+        </div>
+      )}
 
       <div style={{ margin: '16px 0 24px 0', textAlign: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>

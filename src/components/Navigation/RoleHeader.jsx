@@ -212,7 +212,7 @@ export const RoleHeader = () => {
               title="Miiska aad fadhido"
             >
               <QrCode size={13} style={{ color: 'var(--primary)' }} />
-              <span>{selectedTable || 'TB-01'}</span>
+              <span>{selectedTable}</span>
             </div>
           )}
 
@@ -221,7 +221,8 @@ export const RoleHeader = () => {
             <div className="table-selector">
               <QrCode size={14} style={{ color: 'var(--primary)' }} />
               <span style={{ fontSize: '0.8rem', color: '#A09790' }}>{t('table')}:</span>
-              <select value={selectedTable} onChange={(e) => changeTable(e.target.value)}>
+              <select value={selectedTable || ''} onChange={(e) => changeTable(e.target.value || null)}>
+                <option value="">Takeaway / Miis La'aan</option>
                 {tablesList.length > 0 ? (
                   tablesList.map((t) => (
                     <option key={t.id} value={t.table_number}>

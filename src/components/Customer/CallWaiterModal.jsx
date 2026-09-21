@@ -11,20 +11,23 @@ const CALL_REASONS = [
 ];
 
 export const CallWaiterModal = ({ isOpen, onClose }) => {
-  const { selectedTable, callWaiter } = useApp();
+  const { selectedTable, callWaiter, tablesList } = useApp();
   const [selectedReason, setSelectedReason] = useState('Caawimaad Guud');
   const [customNote, setCustomNote] = useState('');
+  const [manualTable, setManualTable] = useState('TB-01');
   const [loading, setLoading] = useState(false);
   const [sentSuccess, setSentSuccess] = useState(false);
 
   if (!isOpen) return null;
+
+  const currentTable = selectedTable || manualTable;
 
   const handleSendCall = async () => {
     setLoading(true);
     const finalReason = customNote.trim() ? `${selectedReason} - ${customNote.trim()}` : selectedReason;
     try {
       await callWaiter({
-        tableNumber: selectedTable,
+        tableNumber: currentTable,
         reason: finalReason
       });
       setSentSuccess(true);
@@ -80,7 +83,11 @@ export const CallWaiterModal = ({ isOpen, onClose }) => {
                 Wac Kabeeleyga
               </h2>
               <div style={{ fontSize: '0.8rem', opacity: 0.9, marginTop: 2 }}>
-                Miiskaaga: <strong style={{ background: '#FFFFFF', color: '#EA580C', padding: '1px 6px', borderRadius: 6, fontWeight: 900 }}>{selectedTable}</strong>
+                {selectedTable ? (
+                  <>Miiskaaga: <strong style={{ background: '#FFFFFF', color: '#EA580C', padding: '1px 6px', borderRadius: 6, fontWeight: 900 }}>{selectedTable}</strong></>
+                ) : (
+                  <span>Dooro miiska aad fadhido</span>
+                )}
               </div>
             </div>
           </div>
@@ -125,11 +132,47 @@ export const CallWaiterModal = ({ isOpen, onClose }) => {
                 Kabeeleyga waa loo yeeray! 🛎️
               </h3>
               <p style={{ fontSize: '0.88rem', color: '#047857', lineHeight: 1.5, margin: '0 auto', maxWidth: 280 }}>
-                Shaqaalaha maqaayadda ayaa isla markiiba fariintaada helay, daqiiqad gudaheed ayay miiskaaga <strong>{selectedTable}</strong> kuugu imanayaan.
+                Shaqaalaha maqaayadda ayaa isla markiiba fariintaada helay, daqiiqad gudaheed ayay miiskaaga <strong>{currentTable}</strong> kuugu imanayaan.
               </p>
             </div>
           ) : (
             <>
+              {/* If no table was scanned via QR, allow picking table */}
+              {!selectedTable && (
+                <div style={{ marginBottom: 14 }}>
+                  <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#475569', display: 'block', marginBottom: 5 }}>
+                    Fadlan dooro nambarka miiskaaga:
+                  </label>
+                  <select
+                    value={manualTable}
+                    onChange={(e) => setManualTable(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '9px 12px',
+                      borderRadius: 10,
+                      border: '1px solid #CBD5E1',
+                      fontSize: '0.88rem',
+                      fontWeight: 700,
+                      background: '#F8FAFC'
+                    }}
+                  >
+                    {tablesList && tablesList.length > 0 ? (
+                      tablesList.map((t) => (
+                        <option key={t.id} value={t.table_number}>{t.table_number}</option>
+                      ))
+                    ) : (
+                      <>
+                        <option value="TB-01">TB-01</option>
+                        <option value="TB-02">TB-02</option>
+                        <option value="TB-03">TB-03</option>
+                        <option value="TB-04">TB-04</option>
+                        <option value="TB-05">TB-05</option>
+                      </>
+                    )}
+                  </select>
+                </div>
+              )}
+
               <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#475569', marginBottom: 10 }}>
                 Maxaad u baahan tahay? (Dooro sababta)
               </div>
