@@ -2,7 +2,12 @@ import express from 'express';
 import cors from 'cors';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { initDb, query, getOne, run } from './db.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const httpServer = createServer(app);
@@ -781,10 +786,21 @@ app.put('/api/waiter-calls/:id/attend', async (req, res) => {
   }
 });
 
-const PORT = 3001;
+// Serve built frontend assets in production
+app.use(express.static(path.join(__dirname, '../dist')));
+
+// SPA Wildcard Route to serve frontend
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api') || req.path.startsWith('/images') || req.path.startsWith('/socket.io')) {
+    return next();
+  }
+  res.sendFile(path.join(__dirname, '../dist/index.html'));
+});
+
+const PORT = process.env.PORT || 3001;
 
 initDb().then(() => {
-  httpServer.listen(PORT, () => {
-    console.log(`🚀 Restaurant Backend running at http://localhost:${PORT}`);
+  httpServer.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Restaurant Backend running on port ${PORT}`);
   });
 });
